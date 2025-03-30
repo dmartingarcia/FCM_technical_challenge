@@ -1,0 +1,21 @@
+# Ignore other temporary files.
+/.byebug_history
+
+# Ignore Gems
+*.gem
+/pkg
+/vendor/
+
+# Ignore tests / Production build
+/spec/
+.rubocop*
+.rspec
+*.md
+
+# Editor and IDE files
+/.idea/
+/.vscode/
+/.sass-cache
+*.swp
+*.swo
+/.ruby-lsp/

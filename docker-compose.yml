@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+      target: build
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+      - vendor_bundle:/usr/src/vendor/bundle
+
+volumes:
+  vendor_bundle:

@@ -1,0 +1,14 @@
+# Bundler & Gems
+/.bundle/
+/vendor/bundle/
+
+# Ignore pid files, workers, and other temporary files.
+/.byebug_history
+
+# Editor and IDE files
+/.idea/
+/.vscode/
+/.sass-cache
+*.swp
+*.swo
+/.ruby-lsp/
