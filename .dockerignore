@@ -1,5 +1,6 @@
 # Ignore other temporary files.
 /.byebug_history
+/coverage/
 
 # Ignore Gems
 *.gem
