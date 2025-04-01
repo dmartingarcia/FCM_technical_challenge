@@ -8,9 +8,7 @@ require 'time'
 module Core
   module Ports
     module SegmentRepositoryPort
-      def find_all
-        raise NotImplementedError, 'Subclasses must implement find_all'
-      end
+      def find_all; end
 
       private
 

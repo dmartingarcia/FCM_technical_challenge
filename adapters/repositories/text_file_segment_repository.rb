@@ -26,14 +26,15 @@ module Adapters
       end
 
       def process_segment_reservations(lines)
-        lines.filter { |line| line.start_with?('SEGMENT: ') }
-             .filter_map { |line| process_segment_line(line) }
+        lines.filter { |line| line.start_with?('SEGMENT: ') }  # Get just the segment lines
+             .filter_map { |line| process_segment_line(line) } # map them except nils (succesfully processed)
              .sort_by(&:start_time)
       end
 
       def process_segment_line(line)
         raw_segment = line.chomp.sub('SEGMENT: ', '')
-        parse_segment(raw_segment)
+
+        parse_segment(raw_segment).tap(&:validate_start_and_end_date)
       rescue Core::Errors::InvalidSegmentError, Core::Errors::InvalidDateError => e
         log_parse_error(e.message)
         nil
@@ -54,54 +55,36 @@ module Adapters
 
         raise Core::Errors::InvalidSegmentError, "Invalid transport format: #{line}" unless match
 
-        origin = match[2]
-        destination = match[5]
-        departure = parse_datetime(match[3], match[4])
-        arrival = parse_datetime(match[3], match[6])
+        origin, date, departure_time, destination, arrival_time = match.to_a[2..]
+
+        departure = parse_datetime(date, departure_time)
+        arrival = parse_datetime(date, arrival_time)
 
         arrival = arrival.next_day if next_day?(departure, arrival)
 
-        transport = klass.new(
+        klass.new(
           origin: origin,
           destination: destination,
           start_time: departure,
           end_time: arrival
         )
-
-        validate_start_and_end_date(transport)
-
-        transport
-      rescue ArgumentError => e
-        raise Core::Errors::InvalidDateError, "Invalid date in: #{line} - #{e.backtrace}"
-      end
-
-      def next_day?(departure, arrival)
-        arrival < departure
-      end
-
-      def validate_start_and_end_date(segment)
-        raise Core::Errors::InvalidDateError, 'start_time >  end_time' if segment.start_time > segment.end_time
       end
 
       def create_hotel(line, klass)
         match = line.match(/Hotel (\w{3}) (\d{4}-\d{2}-\d{2}) -> (\d{4}-\d{2}-\d{2})/)
         raise Core::Errors::InvalidSegmentError, "Invalid hotel format: #{line}" unless match
 
-        location = match[1]
+        location, check_in, check_out = match.to_a[1..]
 
-        check_in = parse_date(match[2])
-        check_out = parse_date(match[3])
-
-        hotel = klass.new(
+        klass.new(
           location: location,
-          start_time: check_in,
-          end_time: check_out
+          start_time: parse_date(check_in),
+          end_time: parse_date(check_out)
         )
-        validate_start_and_end_date(hotel)
+      end
 
-        hotel
-      rescue ArgumentError => e
-        raise Core::Errors::InvalidDateError, "Invalid date in: #{line} - #{e.backtrace[..2]}"
+      def next_day?(departure, arrival)
+        arrival < departure
       end
 
       def log_parse_error(message)

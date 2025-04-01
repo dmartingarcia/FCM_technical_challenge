@@ -3,12 +3,24 @@ module Core
     module Segment
       # INFO: I prefer to use composition over inheritance as
       # we can extend the logic of any entity independently of the previous assigned logic.
+
+      def initialize(origin:, destination:, start_time:, end_time:)
+        @origin = origin
+        @destination = destination
+        @start_time = start_time
+        @end_time = end_time
+      end
+
       def hotel?
         is_a?(Core::Entities::Hotel)
       end
 
       def transport?
         [Core::Entities::Flight, Core::Entities::Train].any? { |c| is_a?(c) }
+      end
+
+      def validate_start_and_end_date
+        raise Core::Errors::InvalidDateError, 'start_time > end_time' if start_time > end_time
       end
 
       def connection_to?(segment)

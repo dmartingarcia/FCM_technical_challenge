@@ -33,42 +33,19 @@ module Core
         @segments.select { |segment| segment.transport? && segment.origin == @base }
       end
 
-      # rubocop:disable Metrics/MethodLength
-      # Will be better to have a longer method that be forced to split the logic
-      def build_travel(initial_segment, segments)
-        travel = Core::Entities::Travel.new(base: @base, segments: [initial_segment])
-        segments.delete(initial_segment)
-
-        current_location = initial_segment.destination
-        current_end_time = initial_segment.end_time
-
-        loop do
-          # First look for transport connections (less than 24 hours before arrival of the current segment)
-          transport = find_next_transport(current_location, current_end_time, segments)
-          if transport
-            travel.add_segment(transport)
-            segments.delete(transport)
-            current_location = transport.destination
-            current_end_time = transport.end_time
-            next
-          end
-
-          # Then look for hotels at current location if there's no connections
-          hotel = find_hotel(current_location, current_end_time, segments)
-          if hotel
-            travel.add_segment(hotel)
-            segments.delete(hotel)
-            current_end_time = hotel.end_time
-            next
-          end
-
+      def build_travel(current_segment, segments)
+        Core::Entities::Travel.new(base: @base, segments: [current_segment]).tap do |travel|
+          segments.delete(current_segment)
           # End trip if we return to base or there's no other connections or hotel segments
-          break if current_location == @base || (hotel.nil? && transport.nil?)
-        end
+          while !current_segment.nil? && segment_destination(current_segment) != @base
+            # First look for transport connections (less than 24 hours before arrival of the current segment)
+            # Then look for hotels at current location if there's no transports
+            current_segment = find_next_transport(current_segment, segments) || find_hotel(current_segment, segments)
 
-        travel
+            travel.add_segment(current_segment) && segments.delete(current_segment) if current_segment
+          end
+        end
       end
-      # rubocop:enable Metrics/MethodLength
 
       def validate_input!
         return unless @segments.empty?
@@ -76,19 +53,27 @@ module Core
         raise Core::Errors::EmptyItineraryError, 'No segments provided for grouping'
       end
 
-      def find_hotel(location, max_start_time, segments)
-        segments.find do |segment|
-          segment.hotel? &&
-            segment.location == location &&
-            segment.start_time <= max_start_time
+      def segment_destination(segment)
+        if segment.is_a?(Core::Entities::Hotel)
+          segment.location
+        else
+          segment.destination
         end
       end
 
-      def find_next_transport(current_location, last_end_time, segments)
+      def find_hotel(current_segment, segments)
+        segments.find do |segment|
+          segment.hotel? &&
+            segment.location == segment_destination(current_segment) &&
+            segment.start_time <= current_segment.start_time
+        end
+      end
+
+      def find_next_transport(current_segment, segments)
         segments.find do |segment|
           segment.transport? &&
-            segment.origin == current_location &&
-            segment.start_time <= last_end_time.next_day
+            segment.origin == segment_destination(current_segment) &&
+            segment.start_time <= current_segment.end_time.next_day
         end
       end
     end

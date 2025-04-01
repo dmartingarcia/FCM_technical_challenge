@@ -19,8 +19,6 @@ module Core
 
         # INFO: Just in case there's no flights or trains is a local travel return base.
         return @base if segments.empty?
-        # INFO: In case there's just one travel (one-way) destination is the travel destination
-        return segments.first.destination if segments.size == 1
 
         travels = associate_connected_segments(segments)
 
