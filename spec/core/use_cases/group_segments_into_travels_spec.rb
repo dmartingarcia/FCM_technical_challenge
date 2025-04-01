@@ -6,26 +6,21 @@ RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
   let(:travels) { described_class.new(segments, base).execute }
   let(:base) { 'SVQ' }
   let(:segments) do
-    # Reservation 1
     [
-      Core::Entities::Flight.new(
-        origin: 'SVQ',
-        destination: 'BCN',
-        start_time: DateTime.new(2023, 3, 2, 6, 40),
-        end_time: DateTime.new(2023, 3, 2, 9, 10)
-      ),
-      # Reservation 2
-      Core::Entities::Hotel.new(
-        location: 'BCN',
-        start_time: DateTime.new(2023, 1, 5),
-        end_time: DateTime.new(2023, 1, 10)
-      ),
-      # Reservation 3 (Two flight segments)
+      # TRIP to BCN
+      # Flight from SVQ to BCN at 2023-01-05 20:40 to 22:10
+      # Hotel at BCN on 2023-01-05 to 2023-01-10
+      # Flight from BCN to SVQ at 2023-01-10 10:30 to 11:50
       Core::Entities::Flight.new(
         origin: 'SVQ',
         destination: 'BCN',
         start_time: DateTime.new(2023, 1, 5, 20, 40),
         end_time: DateTime.new(2023, 1, 5, 22, 10)
+      ),
+      Core::Entities::Hotel.new(
+        location: 'BCN',
+        start_time: DateTime.new(2023, 1, 5),
+        end_time: DateTime.new(2023, 1, 10)
       ),
       Core::Entities::Flight.new(
         origin: 'BCN',
@@ -33,12 +28,20 @@ RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
         start_time: DateTime.new(2023, 1, 10, 10, 30),
         end_time: DateTime.new(2023, 1, 10, 11, 50)
       ),
-      # Reservation 4 (Two train segments)
+      # TRIP to MAD
+      # Train from SVQ to MAD at 2023-02-15 09:30 to 11:00
+      # Hotel at MAD on 2023-02-15 to 2023-02-17
+      # Train from MAD to SVQ at 2023-02-17 17:00 to 19:30
       Core::Entities::Train.new(
         origin: 'SVQ',
         destination: 'MAD',
         start_time: DateTime.new(2023, 2, 15, 9, 30),
-        end_time: DateTime.new(2023, 2, 15, 11, 0)
+        end_time: DateTime.new(2023, 2, 15, 11, 0o0)
+      ),
+      Core::Entities::Hotel.new(
+        location: 'MAD',
+        start_time: DateTime.new(2023, 2, 15),
+        end_time: DateTime.new(2023, 2, 17)
       ),
       Core::Entities::Train.new(
         origin: 'MAD',
@@ -46,13 +49,15 @@ RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
         start_time: DateTime.new(2023, 2, 17, 17, 0),
         end_time: DateTime.new(2023, 2, 17, 19, 30)
       ),
-      # Reservation 5
-      Core::Entities::Hotel.new(
-        location: 'MAD',
-        start_time: DateTime.new(2023, 2, 15),
-        end_time: DateTime.new(2023, 2, 17)
+      # TRIP to NYC
+      # Flight from SVQ to BCN at 2023-03-02 06:40 to 09:10
+      # Flight from BCN to NYC at 2023-03-02 15:00 to 22:45
+      Core::Entities::Flight.new(
+        origin: 'SVQ',
+        destination: 'BCN',
+        start_time: DateTime.new(2023, 3, 2, 6, 40),
+        end_time: DateTime.new(2023, 3, 2, 9, 10)
       ),
-      # Reservation 6
       Core::Entities::Flight.new(
         origin: 'BCN',
         destination: 'NYC',
@@ -63,8 +68,16 @@ RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
   end
 
   describe '#execute' do
+    context 'with empty list of segments' do
+      let(:segments) { [] }
+
+      it 'returns an error after validation' do
+        expect { travels }.to raise_error(Core::Errors::EmptyItineraryError)
+      end
+    end
+
     it 'groups segments into 3 travels' do
-      # Expect three trips
+      # Expect three travels
       expect(travels.size).to eq(3)
     end
 
