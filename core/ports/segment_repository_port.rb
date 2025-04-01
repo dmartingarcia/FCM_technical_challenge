@@ -1,6 +1,7 @@
 # frozen_string_literal: true
+require 'time'
 
-# INFO: Any repository that returns segments should inherit from this one, to ensure it has the same interface
+# INFO: Any repository that returns segments should inherit from this one, to ensure it has the same interface, it also provides some helper functions
 
 module Core
   module Ports

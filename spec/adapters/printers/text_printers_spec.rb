@@ -5,7 +5,7 @@ require 'date'
 
 RSpec.describe Adapters::Printers::TextSegmentPrinter do
   let(:base) { 'SVQ' }
-  let(:printer) { described_class.new(travels, base, logger_instance: logger_instance) }
+  let(:printer) { described_class.new(travels, logger_instance: logger_instance) }
   let(:logger_instance) { Adapters::Loggers::StdoutLogger.new }
 
   describe '#print' do
@@ -22,6 +22,7 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
       let(:travels) do
         [
           Core::Entities::Travel.new(
+            base: 'BCN',
             segments: [
               Core::Entities::Flight.new(
                 origin: 'SVQ',
@@ -37,6 +38,7 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
             ]
           ),
           Core::Entities::Travel.new(
+            base: 'MAD',
             segments: [
               Core::Entities::Train.new(
                 origin: 'SVQ',
@@ -76,6 +78,7 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
       let(:travels) do
         [
           Core::Entities::Travel.new(
+            base: 'TST',
             segments: [
               Core::Entities::Flight.new(
                 origin: 'SVQ',
@@ -110,6 +113,7 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
       let(:travels) do
         [
           Core::Entities::Travel.new(
+            base: 'NYC',
             segments: [
               Core::Entities::Flight.new(
                 origin: 'SVQ',
@@ -126,20 +130,19 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
         expect(output).to include('2023-04-01 23:30 to 2023-04-02 02:15')
       end
     end
-  end
 
-  describe 'error handling' do
     context 'with invalid segment type' do
       let(:travels) do
         [
           Core::Entities::Travel.new(
-            segments: [instance_double(InvalidSegment)]
+            base: 'MAD',
+            segments: [instance_double("InvalidSegment")]
           ),
         ]
       end
 
       it 'raises appropriate error' do
-        expect { printer.print }.to raise_error(Core::Errors::UnknownSegmentTypeError)
+        expect { output }.to raise_error(Core::Errors::UnknownSegmentTypeError)
       end
     end
   end

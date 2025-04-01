@@ -3,15 +3,14 @@
 module Adapters
   module Printers
     class TextSegmentPrinter
-      def initialize(travels, base, logger_instance: Adapters::Loggers::StdoutLogger.new)
+      def initialize(travels, logger_instance: Adapters::Loggers::StdoutLogger.new)
         @travels = travels
-        @base = base
         @logger_instance = logger_instance
       end
 
       def print
         @travels.each do |travel|
-          @logger_instance.log_info("TRIP to #{travel.destination(@base)}")
+          @logger_instance.log_info("TRIP to #{travel.destination}")
           travel.segments.each do |segment|
             @logger_instance.log_info(format_segment(segment))
           end

@@ -3,8 +3,7 @@
 require 'rspec'
 
 RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
-  subject(:travels) { described_class.new(segments, base).execute }
-
+  let(:travels) { described_class.new(segments, base).execute }
   let(:base) { 'SVQ' }
   let(:segments) do
     # Reservation 1

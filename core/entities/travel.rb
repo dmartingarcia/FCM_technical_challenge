@@ -3,9 +3,10 @@
 module Core
   module Entities
     class Travel
-      attr_reader :segments
+      attr_reader :segments, :base
 
-      def initialize(segments: [])
+      def initialize(base:, segments: [])
+        @base = base
         @segments = segments
       end
 
@@ -13,9 +14,9 @@ module Core
         @segments << segment
       end
 
-      def destination(base)
+      def destination
         transports = @segments.select { |s| [Flight, Train].any? { |c| s.is_a?(c) } }
-        destinations = transports.map(&:destination).reject { |d| d == base }
+        destinations = transports.map(&:destination).reject { |d| d == @base }
         destinations.last || base
       end
     end
