@@ -2,7 +2,7 @@
 
 module Adapters
   module Printers
-    class TextPrinter
+    class TextSegmentPrinter
       def initialize(travels, base, logger_instance: Adapters::Loggers::StdoutLogger.new)
         @travels = travels
         @base = base

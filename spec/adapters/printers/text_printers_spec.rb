@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'date'
 
-RSpec.describe Adapters::Printers::TextPrinter do
+RSpec.describe Adapters::Printers::TextSegmentPrinter do
   let(:base) { 'SVQ' }
   let(:printer) { described_class.new(travels, base, logger_instance: logger_instance) }
   let(:logger_instance) { Adapters::Loggers::StdoutLogger.new }

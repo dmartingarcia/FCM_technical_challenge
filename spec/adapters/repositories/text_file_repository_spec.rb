@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'tempfile'
 require 'date'
 
-RSpec.describe Adapters::Repositories::TextFileRepository do
+RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
   let(:base_file_path) { 'spec/fixtures/input.txt' }
   let(:logger_instance) { instance_spy(Adapters::Loggers::StdoutLogger) }
 

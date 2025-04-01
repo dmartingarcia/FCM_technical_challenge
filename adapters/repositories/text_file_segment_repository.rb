@@ -4,7 +4,7 @@ require 'date'
 
 module Adapters
   module Repositories
-    class TextFileRepository
+    class TextFileSegmentRepository
       include Core::Ports::SegmentRepositoryPort
 
       def initialize(file_path, logger_instance: Adapters::Loggers::StdoutLogger.new)
