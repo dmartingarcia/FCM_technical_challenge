@@ -33,8 +33,8 @@ audit: # Runs security and dependency audits
 
 # Linter command
 linter: # Runs all Ruby linters
-	@$(DOCKER_EXEC) bundle exec rubocop $(filter-out $@,$(MAKECMDGOALS))
+	@$(DOCKER_COMPOSE) run --rm -T app bundle exec rubocop $(filter-out $@,$(MAKECMDGOALS))
 
 # Test command
-test: # Runs tests using RSpec
+test: bundle-install # Runs tests using RSpec
 	@$(DOCKER_EXEC) bundle exec rspec --color $(filter-out $@,$(MAKECMDGOALS))
