@@ -33,7 +33,7 @@ RSpec.describe Adapters::Printers::TextPrinter do
                 location: 'BCN',
                 start_time: DateTime.new(2023, 3, 2, 14, 0),
                 end_time: DateTime.new(2023, 3, 5, 10, 0)
-              )
+              ),
             ]
           ),
           Core::Entities::Travel.new(
@@ -43,9 +43,9 @@ RSpec.describe Adapters::Printers::TextPrinter do
                 destination: 'MAD',
                 start_time: DateTime.new(2023, 2, 15, 9, 30),
                 end_time: DateTime.new(2023, 2, 15, 11, 0)
-              )
+              ),
             ]
-          )
+          ),
         ]
       end
 
@@ -93,9 +93,9 @@ RSpec.describe Adapters::Printers::TextPrinter do
                 location: 'TST',
                 start_time: DateTime.new(2023, 1, 1, 14, 0),
                 end_time: DateTime.new(2023, 1, 3, 10, 0)
-              )
+              ),
             ]
-          )
+          ),
         ]
       end
 
@@ -116,9 +116,9 @@ RSpec.describe Adapters::Printers::TextPrinter do
                 destination: 'NYC',
                 start_time: DateTime.new(2023, 4, 1, 23, 30),
                 end_time: DateTime.new(2023, 4, 2, 2, 15)
-              )
+              ),
             ]
-          )
+          ),
         ]
       end
 
@@ -133,8 +133,8 @@ RSpec.describe Adapters::Printers::TextPrinter do
       let(:travels) do
         [
           Core::Entities::Travel.new(
-            segments: [instance_double('InvalidSegment')]
-          )
+            segments: [instance_double(InvalidSegment)]
+          ),
         ]
       end
 

@@ -2,8 +2,8 @@
 
 source 'https://rubygems.org'
 
-gem 'zeitwerk', '~> 2.7'
 gem 'logger'
+gem 'zeitwerk', '~> 2.7'
 
 group :development do
   gem 'brakeman', require: false

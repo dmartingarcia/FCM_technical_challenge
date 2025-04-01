@@ -3,7 +3,7 @@
 require 'rspec'
 
 RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
-  subject(:segment_grouper) { described_class.new(segments, base) }
+  subject(:travels) { described_class.new(segments, base).execute }
 
   let(:base) { 'SVQ' }
   let(:segments) do
@@ -62,7 +62,6 @@ RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
       ),
     ]
   end
-  subject(:travels) { segment_grouper.execute }
 
   describe '#execute' do
     it 'groups segments into 3 travels' do
@@ -80,18 +79,18 @@ RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
         origin: 'SVQ',
         destination: 'BCN',
         start_time: DateTime.new(2023, 1, 5, 20, 40),
-        end_time:   DateTime.new(2023, 1, 5, 22, 10)
+        end_time: DateTime.new(2023, 1, 5, 22, 10)
       )
       expect(trip_to_bcn.segments[1]).to have_attributes(
-        location:   'BCN',
+        location: 'BCN',
         start_time: DateTime.new(2023, 1, 5),
-        end_time:   DateTime.new(2023, 1, 10)
+        end_time: DateTime.new(2023, 1, 10)
       )
       expect(trip_to_bcn.segments[2]).to have_attributes(
         origin: 'BCN',
         destination: 'SVQ',
         start_time: DateTime.new(2023, 1, 10, 10, 30),
-        end_time:   DateTime.new(2023, 1, 10, 11, 50)
+        end_time: DateTime.new(2023, 1, 10, 11, 50)
       )
     end
 
@@ -104,18 +103,18 @@ RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
         origin: 'SVQ',
         destination: 'MAD',
         start_time: DateTime.new(2023, 2, 15, 9, 30),
-        end_time:   DateTime.new(2023, 2, 15, 11, 0)
+        end_time: DateTime.new(2023, 2, 15, 11, 0)
       )
       expect(trip_to_mad.segments[1]).to have_attributes(
-        location:   'MAD',
+        location: 'MAD',
         start_time: DateTime.new(2023, 2, 15),
-        end_time:   DateTime.new(2023, 2, 17)
+        end_time: DateTime.new(2023, 2, 17)
       )
       expect(trip_to_mad.segments[2]).to have_attributes(
         origin: 'MAD',
         destination: 'SVQ',
         start_time: DateTime.new(2023, 2, 17, 17, 0),
-        end_time:   DateTime.new(2023, 2, 17, 19, 30)
+        end_time: DateTime.new(2023, 2, 17, 19, 30)
       )
     end
 
@@ -128,13 +127,13 @@ RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
         origin: 'SVQ',
         destination: 'BCN',
         start_time: DateTime.new(2023, 3, 2, 6, 40),
-        end_time:   DateTime.new(2023, 3, 2, 9, 10)
+        end_time: DateTime.new(2023, 3, 2, 9, 10)
       )
       expect(trip_to_nyc.segments[1]).to have_attributes(
         origin: 'BCN',
         destination: 'NYC',
         start_time: DateTime.new(2023, 3, 2, 15, 0),
-        end_time:   DateTime.new(2023, 3, 2, 22, 45)
+        end_time: DateTime.new(2023, 3, 2, 22, 45)
       )
     end
   end
