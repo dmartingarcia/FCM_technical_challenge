@@ -34,7 +34,7 @@ module Adapters
 
       def format_transport(segment)
         "#{segment.class.to_s.split('::').last} from #{segment.origin} to #{segment.destination} " \
-          "at #{segment.start_time.strftime('%Y-%m-%d %H:%M')} to #{segment.end_time.strftime('%Y-%m-%d %H:%M')}"
+          "at #{segment.start_time.strftime('%Y-%m-%d %H:%M')} to #{segment.end_time.strftime('%H:%M')}"
       end
 
       def format_hotel(segment)

@@ -54,11 +54,11 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
       it 'groups trips by destination with proper formatting' do
         expected_output = <<~OUTPUT
           TRIP to BCN
-          Flight from SVQ to BCN at 2023-03-02 06:40 to 2023-03-02 09:10
+          Flight from SVQ to BCN at 2023-03-02 06:40 to 09:10
           Hotel at BCN on 2023-03-02 to 2023-03-05
 
           TRIP to MAD
-          Train from SVQ to MAD at 2023-02-15 09:30 to 2023-02-15 11:00
+          Train from SVQ to MAD at 2023-02-15 09:30 to 11:00
 
         OUTPUT
 
@@ -127,16 +127,22 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
       end
 
       it 'shows correct date transitions' do
-        expect(output).to include('2023-04-01 23:30 to 2023-04-02 02:15')
+        expect(output).to include('2023-04-01 23:30 to 02:15')
       end
     end
 
     context 'with invalid segment type' do
+      stub_class = Class.new do
+        def transport?
+          false
+        end
+      end
+
       let(:travels) do
         [
           Core::Entities::Travel.new(
             base: 'MAD',
-            segments: [instance_double("InvalidSegment")]
+            segments: [instance_double(stub_class, transport?: false)]
           ),
         ]
       end
