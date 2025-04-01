@@ -86,8 +86,8 @@ module Adapters
 
         klass.new(
           location: location,
-          start_time: DateTime.new(check_in.year, check_in.month, check_in.day, 14),
-          end_time: DateTime.new(check_out.year, check_out.month, check_out.day, 10)
+          start_time: DateTime.new(check_in.year, check_in.month, check_in.day),
+          end_time: DateTime.new(check_out.year, check_out.month, check_out.day)
         )
       rescue ArgumentError => e
         raise Core::Errors::InvalidDateError, "Invalid date in: #{line} - #{e.backtrace}"

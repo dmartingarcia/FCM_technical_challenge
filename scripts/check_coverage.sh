@@ -1,10 +1,8 @@
 #!/bin/bash
 # check_coverage.sh
 
-# Check if the coverage file exists; we can execute it
-if [ ! -f coverage/.last_run.json ]; then
-  make test
-fi
+# Execute tests
+make test
 
 # Expect the minimum coverage percentage as the first argument.
 MIN_COVERAGE=90
