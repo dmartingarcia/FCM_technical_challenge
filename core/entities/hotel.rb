@@ -3,6 +3,7 @@
 module Core
   module Entities
     class Hotel
+      include Core::Entities::Segment
       attr_reader :location, :start_time, :end_time
 
       def initialize(location:, start_time:, end_time:)
