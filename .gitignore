@@ -4,7 +4,8 @@
 
 # Ignore pid files, workers, and other temporary files.
 /.byebug_history
-/coverage/
+/coverage
+/tmp
 
 # Editor and IDE files
 /.idea/
