@@ -60,11 +60,8 @@ RSpec.describe 'End-to-End Test' do
       "bundle exec ruby main.rb #{input_file.path}"
     )
 
-    # Normalize line endings and trailing whitespace
-    normalized_output = output.gsub(/\r\n?/, "\n").gsub(/ +\n/, "\n")
-
     expect(status).to be_success
-    expect(normalized_output.strip).to eq(expected_output.strip)
+    expect(output.strip).to eq(expected_output.strip)
   ensure
     input_file&.unlink
   end
