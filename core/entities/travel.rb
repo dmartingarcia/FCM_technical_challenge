@@ -15,9 +15,42 @@ module Core
       end
 
       def destination
-        transports = @segments.select { |s| [Flight, Train].any? { |c| s.is_a?(c) } }
-        destinations = transports.map(&:destination).reject { |d| d == @base }
-        destinations.last || base
+        segments = @segments.select(&:transport?).sort_by(&:start_time)
+
+        # INFO: Just in case there's no flights or trains is a local travel return base.
+        return @base if segments.empty?
+        # INFO: In case there's just one travel (one-way) destination is the travel destination
+        return segments.first.destination if segments.size == 1
+
+        travels = associate_connected_segments(segments)
+
+        # INFO: for one way travels, destination is the last segment destination
+        return travels.first.last.destination if travels.size == 1
+
+        # INFO: destination should be the intermediate (or last, if there's just one) travel origin
+        travels[travels.size / 2].first.origin
+      end
+
+      private
+
+      def associate_connected_segments(segments)
+        travels = []
+        current_travel = [segments.first]
+        segments = segments[1..]
+
+        segments.each do |segment|
+          previous_segment = current_travel.last
+          if previous_segment.connection_to?(segment) && segment.destination != @base
+            current_travel << segment
+          else
+            travels << current_travel
+            current_travel = [segment]
+          end
+        end
+
+        travels << current_travel unless current_travel.empty?
+
+        travels
       end
     end
   end

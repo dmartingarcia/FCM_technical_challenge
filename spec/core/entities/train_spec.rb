@@ -14,13 +14,15 @@ RSpec.describe Core::Entities::Train do
 
   describe '#hotel?' do
     it 'returns false' do
-      expect(object.hotel?).to be_falsey
+      expect(object).not_to be_hotel
     end
   end
 
   describe '#transport' do
     it 'returns true' do
-      expect(object.transport?).to be_truthy
+      expect(object).to be_transport
     end
   end
+
+  # INFO: Connection_to? is already tested on flight, and both classes behave in the same way for this function.
 end
