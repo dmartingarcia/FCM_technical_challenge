@@ -6,18 +6,14 @@ require 'date'
 RSpec.describe Adapters::Printers::TextSegmentPrinter do
   let(:base) { 'SVQ' }
   let(:printer) { described_class.new(travels, logger_instance: logger_instance) }
-  let(:logger_instance) { Adapters::Loggers::StdoutLogger.new }
+  let(:logger_instance) { Adapters::Loggers::NullLogger.new }
+  let(:info_logs) do
+    printer.print
+    logger_instance.info_logs.join("\n")
+  end
 
   describe '#print' do
     # Subject that captures stdout
-    subject(:output) do
-      $stdout = StringIO.new
-      printer.print
-      $stdout.string
-    ensure
-      $stdout = STDOUT
-    end
-
     context 'with multiple trips' do
       let(:travels) do
         [
@@ -59,10 +55,9 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
 
           TRIP to MAD
           Train from SVQ to MAD at 2023-02-15 09:30 to 11:00
-
         OUTPUT
 
-        expect(output).to eq(expected_output)
+        expect(info_logs).to eq(expected_output)
       end
     end
 
@@ -70,7 +65,7 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
       let(:travels) { [] }
 
       it 'prints nothing' do
-        expect(output).to be_empty
+        expect(info_logs).to be_empty
       end
     end
 
@@ -103,9 +98,9 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
       end
 
       it 'formats all segment types correctly' do
-        expect(output).to include('Flight from SVQ to TST')
-        expect(output).to include('Train from TST to SVQ')
-        expect(output).to include('Hotel at TST')
+        expect(info_logs).to include('Flight from SVQ to TST')
+        expect(info_logs).to include('Train from TST to SVQ')
+        expect(info_logs).to include('Hotel at TST')
       end
     end
 
@@ -127,7 +122,7 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
       end
 
       it 'shows correct date transitions' do
-        expect(output).to include('2023-04-01 23:30 to 02:15')
+        expect(info_logs).to include('2023-04-01 23:30 to 02:15')
       end
     end
 
@@ -148,7 +143,7 @@ RSpec.describe Adapters::Printers::TextSegmentPrinter do
       end
 
       it 'raises appropriate error' do
-        expect { output }.to raise_error(Core::Errors::UnknownSegmentTypeError)
+        expect { printer.print }.to raise_error(Core::Errors::UnknownSegmentTypeError)
       end
     end
   end

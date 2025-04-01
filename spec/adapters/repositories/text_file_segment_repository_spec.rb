@@ -6,7 +6,7 @@ require 'date'
 
 RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
   let(:base_file_path) { 'spec/fixtures/input.txt' }
-  let(:logger_instance) { instance_spy(Adapters::Loggers::StdoutLogger) }
+  let(:logger_instance) { Adapters::Loggers::NullLogger.new }
 
   describe '#new' do
     it 'initialize properly with the file path' do
@@ -120,7 +120,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           segments = repository.find_all_sorted
 
           expect(segments).to be_empty
-          expect(logger_instance).to have_received(:log_error).at_least(3).times
+          expect(logger_instance.error_logs.size).to eq(3)
         end
       end
     end
@@ -180,6 +180,27 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
   end
 
   describe 'error handling' do
+    context 'with invalid date' do
+      let(:invalid_content) do
+        <<~CONTENT
+          SEGMENT: Hotel BCN 2023-13-01 -> 2023-06-05
+          SEGMENT: Hotel BCN 2023-06-01 -> 2023-06-05
+        CONTENT
+      end
+
+      it 'raises InvalidDateError' do
+        Tempfile.create('input') do |f|
+          f.write(invalid_content)
+          f.close
+
+          segments = described_class.new(f.path, logger_instance: logger_instance).find_all_sorted
+          expect(segments.size).to eq(1)
+          expect(segments[0]).to be_a(Core::Entities::Hotel)
+          expect(logger_instance.error_logs.join).to include('Invalid date in: Hotel BCN 2023-13-01 -> 2023-06-05')
+        end
+      end
+    end
+
     context 'with non-existent file' do
       it 'raises FileReadError' do
         expect do
