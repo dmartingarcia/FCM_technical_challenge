@@ -30,9 +30,8 @@ run: build bundle-install # Runs the Ruby script with input.txt or the specified
 
 # Audit command
 audit: # Runs security and dependency audits
-	@$(DOCKER_COMPOSE) run --rm -T app bundle exec rubycritic --no-browser
-	@$(DOCKER_COMPOSE) run --rm -T app bundle audit
-
+	@$(DOCKER_EXEC) bundle exec rubycritic --no-browser
+	@$(DOCKER_EXEC) bundle exec bundler-audit check --update
 
 # Linter command
 linter: # Runs all Ruby linters

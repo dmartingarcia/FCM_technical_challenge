@@ -6,12 +6,12 @@ gem 'logger'
 gem 'zeitwerk', '~> 2.7'
 
 group :development do
-  gem 'brakeman', require: false
-  gem 'bundler-audit', '~> 0.9.2'
+  gem 'bundler-audit', require: false
   gem 'byebug'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rspec', require: false
+  gem 'rubycritic', require: false
 end
 
 group :test do
