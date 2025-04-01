@@ -9,6 +9,8 @@ module Adapters
 
       def initialize
         @logger = Logger.new($stdout)
+        # INFO: remove prefixes with a custom formatter
+        @logger.formatter = proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
       end
 
       def log_info(message)
