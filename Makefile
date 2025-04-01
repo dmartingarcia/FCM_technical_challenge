@@ -2,8 +2,10 @@
 .DEFAULT_GOAL := help
 
 # Vars
-DOCKER_COMPOSE = docker compose
-DOCKER_EXEC = docker compose run --remove-orphans --rm app
+UID := $(shell id -u)
+GID := $(shell id -g)
+DOCKER_COMPOSE := UID=$(UID) GID=$(GID) docker compose
+DOCKER_EXEC := $(DOCKER_COMPOSE) run --remove-orphans --rm app
 
 # Phony targets, this will prevent make/autotools from being confused with files/folders that could have the same name than a folder
 .PHONY: help build run audit linter test
@@ -16,20 +18,21 @@ shell: # Starts an interactive shell
 	@$(DOCKER_COMPOSE) run -it --rm app sh
 
 build: # Builds the Docker images using docker-compose
-	@$(DOCKER_COMPOSE) build
+	@BUILDKIT_PROGRESS=plain $(DOCKER_COMPOSE) build
 
 bundle-install: # Runs bundle install
 	@$(DOCKER_EXEC) bundle install
 
-run: build # Runs the Ruby script with input.txt or the specified file
-	command = ruby main.rb $(if $(filter-out $@,$(MAKECMDGOALS)),$(filter-out $@,$(MAKECMDGOALS)),input.txt)
-	@echo "Running command: $(command)"
-	@$(DOCKER_EXEC) $(command)
+run: build bundle-install # Runs the Ruby script with input.txt or the specified file. e.g: make run input.txt
+	@$(eval input_file := $(if $(filter-out $@,$(MAKECMDGOALS)),$(filter-out $@,$(MAKECMDGOALS)),input.txt))
+	@echo "Running command: ruby main.rb $(input_file)"
+	@$(DOCKER_EXEC) ruby main.rb $(input_file)
 
 # Audit command
 audit: # Runs security and dependency audits
-	$(DOCKER_EXEC) bundler audit
-	$(DOCKER_EXEC) brakeman
+	@$(DOCKER_COMPOSE) run --rm -T app bundle exec rubycritic --no-browser
+	@$(DOCKER_COMPOSE) run --rm -T app bundle audit
+
 
 # Linter command
 linter: # Runs all Ruby linters
@@ -37,4 +40,4 @@ linter: # Runs all Ruby linters
 
 # Test command
 test: bundle-install # Runs tests using RSpec
-	@$(DOCKER_EXEC) bundle exec rspec --color $(filter-out $@,$(MAKECMDGOALS))
+	@$(DOCKER_COMPOSE) run --rm -T app bundle exec rspec --color $(filter-out $@,$(MAKECMDGOALS))

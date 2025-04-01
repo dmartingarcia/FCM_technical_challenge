@@ -1,29 +1,45 @@
 ## Base layer
 FROM ruby:3.4-alpine AS base
 
-RUN apk add --no-cache build-base tzdata yaml-dev
+# Accept build arguments for UID/GID
+ARG UID=1000
+ARG GID=1000
 
-WORKDIR /usr/src/app
+RUN apk add --no-cache build-base tzdata yaml-dev git
 
-ENV BUNDLE_PATH=/usr/src/vendor/bundle
+# Create user and group with specified UID/GID
+RUN addgroup -S appgroup -g ${GID} && \
+    adduser -S appuser -u ${UID} -G appgroup
+
+# Create directories with proper ownership
+RUN mkdir -p /home/appuser/app /home/appuser/vendor/bundle && \
+    chown -R ${UID}:${GID} /home/appuser
+
+WORKDIR /home/appuser/app
+USER appuser
+
+# Configure Bundler paths
+ENV BUNDLE_PATH=/home/appuser/vendor/bundle \
+    BUNDLE_HOME=/home/appuser/vendor/bundle \
+    GEM_HOME=/home/appuser/vendor/bundle \
+    BUNDLE_APP_CONFIG=/home/appuser/vendor/bundle
 
 ## Bundler layer
 FROM base AS bundler
 
-COPY Gemfile /usr/src/app/
-
-RUN bundle install -j $(nproc)
-
-RUN ls -al
+COPY --chown=${UID}:${GID} Gemfile* /home/appuser/app/
+RUN bundle install -j $(nproc) --path "$BUNDLE_PATH"
 
 ## Build layer
 FROM base AS build
 
-# Fixme use a specific user for production containers
-#RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-#USER appuser
+COPY --from=bundler --chown=${UID}:${GID} /home/appuser/vendor/bundle /home/appuser/vendor/bundle
+COPY --from=bundler --chown=${UID}:${GID} /home/appuser/app/Gemfile.lock /home/appuser/app
+COPY --chown=${UID}:${GID} . /home/appuser/app
 
-COPY --from=bundler /usr/src/vendor/bundle /usr/src/vendor/bundle
-COPY . /usr/src/app
+RUN gem install bundler-audit
+
+# Verify zeitwerk is installed
+RUN bundle list
 
 CMD ["ruby", "main.rb", "input.txt"]
