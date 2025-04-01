@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../core/ports/logger_port'
-
 module Adapters
   module Loggers
     class FileLoggerLogger

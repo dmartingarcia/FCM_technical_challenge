@@ -1,7 +1,6 @@
+# frozen_string_literal: true
+
 require 'rspec'
-require_relative '../../use_cases/group_segments_into_travels'
-require_relative '../../core/entities/flight'
-require_relative '../../core/entities/hotel'
 
 RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
   subject(:segment_grouper) { described_class.new(segments, base) }

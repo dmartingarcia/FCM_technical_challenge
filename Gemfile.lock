@@ -13,6 +13,7 @@ GEM
     json (2.10.2)
     language_server-protocol (3.17.0.4)
     lint_roller (1.1.0)
+    logger (1.7.0)
     parallel (1.26.3)
     parser (3.3.7.3)
       ast (~> 2.4.1)
@@ -67,6 +68,7 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    zeitwerk (2.7.2)
 
 PLATFORMS
   ruby
@@ -76,12 +78,14 @@ DEPENDENCIES
   brakeman
   bundler-audit (~> 0.9.2)
   byebug
+  logger
   rspec
   rubocop
   rubocop-performance
   rubocop-rspec
   simplecov (~> 0.22.0)
   simplecov-lcov (~> 0.8.0)
+  zeitwerk (~> 2.7)
 
 BUNDLED WITH
    2.6.2

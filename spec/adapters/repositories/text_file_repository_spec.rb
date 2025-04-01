@@ -3,9 +3,6 @@
 require 'spec_helper'
 require 'tempfile'
 require 'date'
-require_relative '../../../adapters/repositories/text_file_repository'
-require_relative '../../../core/errors'
-require_relative '../../../adapters/loggers/stdout_logger'
 
 RSpec.describe Adapters::Repositories::TextFileRepository do
   let(:base_file_path) { 'spec/fixtures/input.txt' }
@@ -187,7 +184,7 @@ RSpec.describe Adapters::Repositories::TextFileRepository do
       it 'raises FileReadError' do
         expect do
           described_class.new('non_existent.txt').find_all_sorted
-        end.to raise_error(Core::FileReadError)
+        end.to raise_error(Core::Errors::FileReadError)
       end
     end
 
@@ -198,7 +195,7 @@ RSpec.describe Adapters::Repositories::TextFileRepository do
 
           expect do
             described_class.new(f.path).find_all_sorted
-          end.to raise_error(Core::FileReadError)
+          end.to raise_error(Core::Errors::FileReadError)
         end
       end
     end

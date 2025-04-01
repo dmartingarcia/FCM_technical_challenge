@@ -2,6 +2,9 @@
 
 source 'https://rubygems.org'
 
+gem 'zeitwerk', '~> 2.7'
+gem 'logger'
+
 group :development do
   gem 'brakeman', require: false
   gem 'bundler-audit', '~> 0.9.2'

@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../../core/ports/logger_port'
 require 'logger'
 
 module Adapters
   module Loggers
     class StdoutLogger
-      include LoggerPort
+      include Core::Ports::LoggerPort
 
       def initialize
         @logger = Logger.new($stdout)
