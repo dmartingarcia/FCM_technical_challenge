@@ -2,6 +2,10 @@
 
 module Adapters
   module Printers
+    # Responsibility: Output formatting
+    # Generates human-readable trip summaries
+    # Formats dates/times consistently
+    # Implements PrinterPort interface
     class TextSegmentPrinter
       include Core::Ports::PrinterPort
 

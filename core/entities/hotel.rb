@@ -2,6 +2,10 @@
 
 module Core
   module Entities
+    # Responsibility: Value object representing hotel stays
+    # Tracks location, check-in/check-out times
+    # Manages stay duration calculations
+    # Implements Core::Entities::Segment interface
     class Hotel
       include Core::Entities::Segment
       attr_reader :location, :start_time, :end_time

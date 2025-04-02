@@ -14,7 +14,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
     end
   end
 
-  describe '#find_all_sorted' do
+  describe '#find_all' do
     context 'with valid segments' do
       let(:valid_content) do
         <<~CONTENT
@@ -30,7 +30,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           f.close
 
           repository = described_class.new(f.path)
-          segments = repository.find_all_sorted
+          segments = repository.find_all
 
           expect(segments.size).to eq(3)
         end
@@ -42,7 +42,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           f.close
 
           repository = described_class.new(f.path)
-          segments = repository.find_all_sorted
+          segments = repository.find_all
 
           hotel = segments[0]
           expect(hotel).to be_a(Core::Entities::Hotel)
@@ -58,7 +58,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           f.close
 
           repository = described_class.new(f.path)
-          segments = repository.find_all_sorted
+          segments = repository.find_all
 
           train = segments[1]
           expect(train).to be_a(Core::Entities::Train)
@@ -74,7 +74,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           f.close
 
           repository = described_class.new(f.path)
-          segments = repository.find_all_sorted
+          segments = repository.find_all
 
           flight = segments[2]
           expect(flight).to be_a(Core::Entities::Flight)
@@ -95,7 +95,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           f.close
 
           repository = described_class.new(f.path)
-          flight = repository.find_all_sorted.first
+          flight = repository.find_all.first
 
           expect(flight.end_time).to eq(DateTime.new(2023, 4, 2, 2, 15))
         end
@@ -117,7 +117,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           f.close
 
           repository = described_class.new(f.path, logger_instance: logger_instance)
-          segments = repository.find_all_sorted
+          segments = repository.find_all
 
           expect(segments).to be_empty
           expect(logger_instance.error_logs.size).to eq(3)
@@ -129,7 +129,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
       it 'returns empty array' do
         Tempfile.create('input') do |f|
           repository = described_class.new(f.path)
-          expect(repository.find_all_sorted).to eq([])
+          expect(repository.find_all).to eq([])
         end
       end
     end
@@ -146,7 +146,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           f.close
 
           repository = described_class.new(f.path)
-          segments = repository.find_all_sorted
+          segments = repository.find_all
 
           expect(segments[0].origin).to eq('SVQ')
           expect(segments[1].origin).to eq('BCN')
@@ -169,7 +169,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           f.close
 
           repository = described_class.new(f.path)
-          segments = repository.find_all_sorted
+          segments = repository.find_all
 
           expect(segments.size).to eq(2)
           expect(segments[0]).to be_a(Core::Entities::Hotel)
@@ -193,10 +193,10 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
           f.write(invalid_content)
           f.close
 
-          segments = described_class.new(f.path, logger_instance: logger_instance).find_all_sorted
+          segments = described_class.new(f.path, logger_instance: logger_instance).find_all
           expect(segments.size).to eq(1)
           expect(segments[0]).to be_a(Core::Entities::Hotel)
-          expect(logger_instance.error_logs.join).to include('Invalid date in: Hotel BCN 2023-13-01 -> 2023-06-05')
+          expect(logger_instance.error_logs.join).to include('Invalid date 2023-13-01')
         end
       end
     end
@@ -204,7 +204,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
     context 'with non-existent file' do
       it 'raises FileReadError' do
         expect do
-          described_class.new('non_existent.txt').find_all_sorted
+          described_class.new('non_existent.txt').find_all
         end.to raise_error(Core::Errors::FileReadError)
       end
     end

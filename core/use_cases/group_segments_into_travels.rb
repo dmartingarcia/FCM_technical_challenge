@@ -2,6 +2,9 @@
 
 module Core
   module UseCases
+    # Responsibility: Aggregate root representing a complete trip itinerary
+    # Calculate and join segments into travels
+    # Enforces trip integrity rules
     class GroupSegmentsIntoTravels
       def initialize(segments, base)
         @segments = segments

@@ -4,6 +4,10 @@ require 'date'
 
 module Adapters
   module Repositories
+    # Responsibility: Input data handling
+    # Parses text file into domain entities
+    # Validates segment format and chronology
+    # Implements SegmentRepositoryPort interface
     class TextFileSegmentRepository
       include Core::Ports::SegmentRepositoryPort
 
@@ -12,7 +16,7 @@ module Adapters
         @logger_instance = logger_instance
       end
 
-      def find_all_sorted
+      def find_all
         file_content = read_file_content
         process_segment_reservations(file_content)
       end

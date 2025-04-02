@@ -5,7 +5,7 @@ base = ENV.fetch('BASED', 'SVQ')
 
 begin
   repository = Adapters::Repositories::TextFileSegmentRepository.new(ARGV[0])
-  segments = repository.find_all_sorted
+  segments = repository.find_all
   travels = Core::UseCases::GroupSegmentsIntoTravels.new(segments, base).execute
   Adapters::Printers::TextSegmentPrinter.new(travels).print
 rescue Core::Errors::FileReadError => e

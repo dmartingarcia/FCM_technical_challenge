@@ -2,6 +2,9 @@
 
 module Core
   module Entities
+    # Responsibility: Aggregate root representing a complete trip itinerary
+    # Tracks ordered collection of segments (flights, hotels, trains)
+    # Calculates final destination based on segment chain and associations in connections
     class Travel
       attr_reader :segments, :base
 

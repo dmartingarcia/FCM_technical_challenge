@@ -7,6 +7,9 @@ require 'time'
 
 module Core
   module Ports
+    # Responsibility: Define input contract for data sources
+    # Methods:
+    #  - find_all: Returns chronologically ordered segments from the source
     module SegmentRepositoryPort
       def find_all; end
 
@@ -17,10 +20,14 @@ module Core
         date = Date.parse(date_str)
         time = Time.parse(time_str)
         DateTime.new(date.year, date.month, date.day, time.hour, time.min)
+      rescue ArgumentError => e
+        raise Core::Errors::InvalidDateError, "Invalid date #{date_str} - #{e.backtrace}"
       end
 
       def parse_date(date_str)
         Date.parse(date_str)
+      rescue ArgumentError => e
+        raise Core::Errors::InvalidDateError, "Invalid date #{date_str} - #{e.backtrace}"
       end
     end
   end

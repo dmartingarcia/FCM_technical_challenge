@@ -4,6 +4,9 @@ require 'logger'
 
 module Adapters
   module Loggers
+    # Responsibility: Logging implementation
+    # Outputs structured log messages to console
+    # Implements LoggerPort interface
     class StdoutLogger
       include Core::Ports::LoggerPort
 
