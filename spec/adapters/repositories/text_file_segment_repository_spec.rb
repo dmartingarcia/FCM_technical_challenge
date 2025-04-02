@@ -185,6 +185,7 @@ RSpec.describe Adapters::Repositories::TextFileSegmentRepository do
         <<~CONTENT
           SEGMENT: Hotel BCN 2023-13-01 -> 2023-06-05
           SEGMENT: Hotel BCN 2023-06-01 -> 2023-06-05
+          SEGMENT: Flight SVQ 2023-06-01 25:00 -> BCN 08:30
         CONTENT
       end
 
