@@ -1,9 +1,10 @@
 module Core
   module Entities
+    # Responsibility: Segment implementation
+    # It defines the interface of an Segment and common logic (functions)
+    # INFO: I prefer to use composition over inheritance as
+    # we can extend the logic of any entity independently of the previous assigned logic.
     module Segment
-      # INFO: I prefer to use composition over inheritance as
-      # we can extend the logic of any entity independently of the previous assigned logic.
-
       def initialize(origin:, destination:, start_time:, end_time:)
         @origin = origin
         @destination = destination
@@ -16,7 +17,7 @@ module Core
       end
 
       def transport?
-        [Core::Entities::Flight, Core::Entities::Train].any? { |c| is_a?(c) }
+        [Core::Entities::Flight, Core::Entities::Train].any? { |obj_class| is_a?(obj_class) }
       end
 
       def validate_start_and_end_date
