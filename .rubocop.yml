@@ -11,6 +11,7 @@ AllCops:
   Exclude:
     - 'tmp/**/*'
     - 'coverage/**/*'
+    - 'vendor/**/*'
 
 Layout/LineLength:
   Max: 120

@@ -32,9 +32,6 @@ jobs:
           bundle exec bundler-audit update
           bundle exec bundler-audit check --update
 
-      - name: Run RuboCop
-        run: bundle exec rubocop --no-color --no-parallel
-
       - name: Run RSpec with Formatter and Coverage
         run: |
           # This command assumes you have configured SimpleCov to generate an HTML coverage report
@@ -42,6 +39,9 @@ jobs:
 
       - name: Run RubyCritic
         run: bundle exec rubycritic --no-browser
+
+      - name: Run RuboCop
+        run: bundle exec rubocop --no-color --no-parallel
 
       # Upload artifacts so that you can later review the HTML reports and test result files.
       - name: Upload Coverage Report

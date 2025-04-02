@@ -1,0 +1,13 @@
+coverage_path: './coverage' # Set path where SimpleCov coverage will be saved (./coverage by default)
+threshold_score: 10 # default is 0
+deduplicate_symlinks: true # default is false
+no_browser: true # default is false
+formats: # Available values are: html, json, console, lint. Default value is html.
+  - html
+minimum_score: 90
+paths: # Files to analyse. Churn calculation is scoped to these files when using Git SCM.
+  - 'core'
+  - 'adapters'
+reek:
+  enabled: true
+  config_file: ".reek.yml"
