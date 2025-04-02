@@ -9,6 +9,7 @@ module Core
     class Hotel
       include Core::Entities::Segment
       attr_reader :location, :start_time, :end_time
+      alias destination location
 
       def initialize(location:, start_time:, end_time:)
         @location = location

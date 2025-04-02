@@ -34,6 +34,7 @@ module Core
 
       private
 
+      # INFO: This method will try to calculate the stopovers and layovers and group them.
       def associate_connected_segments(segments)
         travels = []
         current_travel = [segments.first]

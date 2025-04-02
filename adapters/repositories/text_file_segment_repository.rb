@@ -64,7 +64,8 @@ module Adapters
         departure = parse_datetime(date, departure_time)
         arrival = parse_datetime(date, arrival_time)
 
-        arrival = arrival.next_day if next_day?(departure, arrival)
+        # INFO: If arrival it's on the next day: e.g: departura at 22:30 -> arrival at 02:15 (next day)
+        arrival = arrival.next_day if arrival < departure
 
         klass.new(
           origin: origin,
