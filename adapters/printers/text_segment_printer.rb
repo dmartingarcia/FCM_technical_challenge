@@ -3,6 +3,8 @@
 module Adapters
   module Printers
     class TextSegmentPrinter
+      include Core::Ports::PrinterPort
+
       def initialize(travels, logger_instance: Adapters::Loggers::StdoutLogger.new)
         @travels = travels
         @logger_instance = logger_instance
