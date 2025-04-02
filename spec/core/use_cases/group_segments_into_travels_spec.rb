@@ -148,5 +148,95 @@ RSpec.describe Core::UseCases::GroupSegmentsIntoTravels do
         end_time: DateTime.new(2023, 3, 2, 22, 45)
       )
     end
+
+    context 'when segments contain just a Hotel reservation' do
+      let(:segments) do
+        [
+          Core::Entities::Hotel.new(
+            location: 'SVQ',
+            start_time: DateTime.new(2023, 1, 5),
+            end_time: DateTime.new(2023, 1, 10)
+          ),
+        ]
+      end
+
+      it 'returns a travel with just the hotel' do
+        expect(travels.size).to eq(1)
+        expect(travels.first.segments[0]).to have_attributes(
+          location: 'SVQ',
+          start_time: DateTime.new(2023, 1, 5),
+          end_time: DateTime.new(2023, 1, 10)
+        )
+      end
+    end
+
+    context "when there's multiple stopovers and layover plus overnights" do
+      let(:segments) do
+        [
+          # Flight SVQ -> BCN (overnight)
+          Core::Entities::Flight.new(
+            origin: 'SVQ',
+            destination: 'BCN',
+            start_time: DateTime.new(2024, 1, 2, 20, 40),
+            end_time: DateTime.new(2024, 1, 3, 2, 10)
+          ),
+
+          # Flight BCN -> BER
+          Core::Entities::Flight.new(
+            origin: 'BCN',
+            destination: 'BER',
+            start_time: DateTime.new(2024, 1, 3, 10, 30),
+            end_time: DateTime.new(2024, 1, 3, 11, 50)
+          ),
+
+          # Flight BER -> AMS
+          Core::Entities::Flight.new(
+            origin: 'BER',
+            destination: 'AMS',
+            start_time: DateTime.new(2024, 1, 3, 14, 30),
+            end_time: DateTime.new(2024, 1, 3, 16, 50)
+          ),
+
+          # Hotel in AMS
+          Core::Entities::Hotel.new(
+            location: 'AMS',
+            start_time: DateTime.new(2024, 1, 3, 14, 0),  # Check-in at 14:00
+            end_time: DateTime.new(2024, 1, 4, 10, 0)     # Check-out at 10:00
+          ),
+
+          # Flight AMS -> BCN (overnight)
+          Core::Entities::Flight.new(
+            origin: 'AMS',
+            destination: 'BCN',
+            start_time: DateTime.new(2024, 1, 4, 20, 40),
+            end_time: DateTime.new(2024, 1, 5, 2, 10)
+          ),
+
+          # Flight BCN -> SVQ
+          Core::Entities::Flight.new(
+            origin: 'BCN',
+            destination: 'SVQ',
+            start_time: DateTime.new(2024, 1, 5, 10, 40),
+            end_time: DateTime.new(2024, 1, 5, 16, 10)
+          ),
+        ]
+      end
+
+      it 'groups into a single travel' do
+        expect(travels.count).to eq(1)
+      end
+
+      describe 'the single travel' do
+        let(:travel) { travels.first }
+
+        it 'has all 6 segments' do
+          expect(travel.segments.count).to eq(6)
+        end
+
+        it 'has destination AMS' do
+          expect(travel.destination).to eq('AMS')
+        end
+      end
+    end
   end
 end
